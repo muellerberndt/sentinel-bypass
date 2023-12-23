@@ -20,7 +20,7 @@ window.addEventListener('load', async () => {
             const contract = new web3.eth.Contract(contractABI, contractAddress);
 
             // Call the smart contract function
-            const result = await contract.methods.execute().call(); // Replace with your method
+            const result = await contract.methods.Execute().call(); // Replace with your method
             console.log(result);
             // Handle the result here
         });
