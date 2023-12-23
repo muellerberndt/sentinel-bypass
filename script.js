@@ -3,6 +3,8 @@ const contractABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constru
 const contractAddress = "0x000000ec57fa2d45a50905b072d3c31e11300000";
 const zeroAddress = "0x0000000000000000000000000000000000000000";
 
+const IS_BYPASS = true;
+
 
 document.addEventListener("DOMContentLoaded", (event) => {
     console.log("DOMContentLoaded");
