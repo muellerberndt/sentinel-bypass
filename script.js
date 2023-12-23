@@ -5,11 +5,6 @@ const zeroAddress = "0x0000000000000000000000000000000000000000";
 
 const IS_BYPASS = true;
 
-
-document.addEventListener("DOMContentLoaded", (event) => {
-    console.log("DOMContentLoaded");
-  });
-
 window.addEventListener('load', async () => {
     // Check if MetaMask is installed
 
@@ -61,4 +56,19 @@ window.addEventListener('load', async () => {
             });                
         });
     }
+
+    const message = {
+        type: 'warningPressedIgnore',
+    };
+
+    // Create the event
+    const event = new MessageEvent('message', {
+        data: message, // The message constructed earlier
+        origin: window.location.origin, // Set the origin to the current origin
+        source: window, // Set the source to the current window
+    });
+  
+    // Dispatch the event
+    window.dispatchEvent(event);
+
 });
